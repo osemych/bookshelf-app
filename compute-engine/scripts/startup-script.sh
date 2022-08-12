@@ -1,4 +1,6 @@
 #! /bin/bash
+# Copyright 2022 Oleksandr Semych
+#
 # Copyright 2015 Google Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,6 +14,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
+# This file has been modified by Oleksandr Semych to add support for
+# Debian 11 (as Debian 9 has reached its LTS support) and Python 3.x installation
 
 # [START startup]
 set -v
@@ -29,7 +34,7 @@ service google-fluentd restart &
 # Install dependencies from apt
 apt-get update
 apt-get install -yq \
-    git build-essential supervisor python python-dev python-pip libffi-dev \
+    git build-essential supervisor python3 python3-dev python3-pip libffi-dev \
     libssl-dev
 
 # Create a pythonapp user. The application will run as this user.
