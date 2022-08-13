@@ -17,6 +17,8 @@
 #
 # This file has been modified by Oleksandr Semych to add support for
 # Debian 11 (as Debian 9 has reached its LTS support) and Python 3.x installation
+# Optimized deployment time by removing man-db package as it's update takes 
+# lng time during apt update and apt install
 
 # [START startup]
 set -v
@@ -31,6 +33,8 @@ curl -s "https://storage.googleapis.com/signals-agents/logging/google-fluentd-in
 service google-fluentd restart &
 # [END logging]
 
+# Remove man-db to optimize apt update and apt install execution times
+apt-get remove -y --purge man-db
 # Install dependencies from apt
 apt-get update
 apt-get install -yq \
