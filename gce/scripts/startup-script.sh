@@ -1,4 +1,6 @@
 #! /bin/bash
+# Copyright 2022 Oleksandr Semych
+#
 # Copyright 2015 Google Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,6 +14,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
+# This file has been modified by Oleksandr Semych to add support for
+# Debian 11 (as Debian 9 has reached its LTS support) and Python 3.x installation
+# Optimized deployment time by removing man-db package as it's update takes 
+# lng time during apt update and apt install
 
 # [START startup]
 set -v
@@ -26,10 +33,12 @@ curl -s "https://storage.googleapis.com/signals-agents/logging/google-fluentd-in
 service google-fluentd restart &
 # [END logging]
 
+# Remove man-db to optimize apt update and apt install execution times
+apt-get remove -y --purge man-db
 # Install dependencies from apt
 apt-get update
 apt-get install -yq \
-    git build-essential supervisor python python-dev python-pip libffi-dev \
+    git build-essential supervisor python3 python3-dev python3-pip libffi-dev \
     libssl-dev
 
 # Create a pythonapp user. The application will run as this user.
@@ -45,9 +54,9 @@ git config --global credential.helper gcloud.sh
 git clone https://source.developers.google.com/p/$PROJECTID/r/[YOUR_REPO_NAME] /opt/app
 
 # Install app dependencies
-virtualenv -p python3 /opt/app/7-gce/env
-source /opt/app/7-gce/env/bin/activate
-/opt/app/7-gce/env/bin/pip install -r /opt/app/7-gce/requirements.txt
+virtualenv -p python3 /opt/app/gce/env
+source /opt/app/gce/env/bin/activate
+/opt/app/gce/env/bin/pip install -r /opt/app/gce/requirements.txt
 
 # Make sure the pythonapp user owns the application code
 chown -R pythonapp:pythonapp /opt/app
@@ -56,14 +65,14 @@ chown -R pythonapp:pythonapp /opt/app
 # application.
 cat >/etc/supervisor/conf.d/python-app.conf << EOF
 [program:pythonapp]
-directory=/opt/app/7-gce
-command=/opt/app/7-gce/env/bin/honcho start -f ./procfile worker bookshelf
+directory=/opt/app/gce
+command=/opt/app/gce/env/bin/honcho start -f ./procfile worker bookshelf
 autostart=true
 autorestart=true
 user=pythonapp
 # Environment variables ensure that the application runs inside of the
 # configured virtualenv.
-environment=VIRTUAL_ENV="/opt/app/7-gce/env",PATH="/opt/app/7-gce/env/bin",\
+environment=VIRTUAL_ENV="/opt/app/gce/env",PATH="/opt/app/gce/env/bin",\
     HOME="/home/pythonapp",USER="pythonapp"
 stdout_logfile=syslog
 stderr_logfile=syslog

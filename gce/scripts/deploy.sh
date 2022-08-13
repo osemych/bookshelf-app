@@ -1,4 +1,6 @@
 #! /bin/bash
+# Copyright 2022 Oleksandr Semych
+#
 # Copyright 2015 Google Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,6 +14,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
+# This file has been modified by Oleksandr Semych to add support for
+# Debian 11 as Debian 9 has reached its LTS support
 
 set -ex
 
@@ -20,7 +25,7 @@ ZONE=us-central1-f
 GROUP=frontend-group
 TEMPLATE=$GROUP-tmpl
 MACHINE_TYPE=f1-micro
-IMAGE_FAMILY=debian-9
+IMAGE_FAMILY=debian-11
 IMAGE_PROJECT=debian-cloud
 STARTUP_SCRIPT=startup-script.sh
 SCOPES="userinfo-email,cloud-platform"
